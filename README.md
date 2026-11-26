@@ -17,6 +17,6 @@ Students must implement a custom `Map` abstraction that supports:
 - listing of keys and values;
 - ordered behavior if the design requires sorting.
 
-## Important note
-This starter project intentionally includes stubs for the required methods. Students must complete the implementation and justify the chosen design.
+## Implementation status
+The `Map` abstraction is implemented with a sorted key-value vector, duplicate prevention, lookup, updates, erasure, and ordered key/value enumeration.
 

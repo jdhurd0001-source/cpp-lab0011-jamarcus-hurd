@@ -1,4 +1,3 @@
-
 #include "project/map.h"
 
 #include <algorithm>
@@ -17,16 +16,19 @@ std::size_t Map::size() const noexcept {
     return entries_.size();
 }
 
-// Find the index of a given key
+// Find the index of a given key using binary search
 std::size_t Map::findIndex(
     const std::string& key) const {
 
-    for (std::size_t i = 0;
-         i < entries_.size(); ++i) {
+    auto it = std::lower_bound(
+        entries_.begin(), entries_.end(), key,
+        [](const KeyValuePair& entry,
+           const std::string& searchKey) {
+            return entry.key < searchKey;
+        });
 
-        if (entries_[i].key == key) {
-            return i;
-        }
+    if (it != entries_.end() && it->key == key) {
+        return static_cast<std::size_t>(it - entries_.begin());
     }
 
     return entries_.size();
@@ -54,11 +56,14 @@ bool Map::insert(const std::string& key, int value) {
         return false;
     }
 
-    // Add the new entry
-    entries_.push_back(KeyValuePair{key, value});
-
-    // Maintain alphabetical ordering
-    sortEntries();
+    // Insert directly in alphabetical position
+    auto position = std::lower_bound(
+        entries_.begin(), entries_.end(), key,
+        [](const KeyValuePair& entry,
+           const std::string& searchKey) {
+            return entry.key < searchKey;
+        });
+    entries_.insert(position, KeyValuePair{key, value});
 
     return true;
 }
@@ -118,6 +123,7 @@ int& Map::at(const std::string& key) {
 // Return all keys in sorted order
 std::vector<std::string> Map::keys() const {
     std::vector<std::string> result;
+    result.reserve(entries_.size());
 
     for (const auto& entry : entries_) {
         result.push_back(entry.key);
@@ -129,6 +135,7 @@ std::vector<std::string> Map::keys() const {
 // Return all corresponding values
 std::vector<int> Map::values() const {
     std::vector<int> result;
+    result.reserve(entries_.size());
 
     for (const auto& entry : entries_) {
         result.push_back(entry.value);

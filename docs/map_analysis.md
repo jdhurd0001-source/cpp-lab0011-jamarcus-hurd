@@ -25,15 +25,17 @@ Students should discuss:
 - trade-offs between sorted vectors and hash-based maps;
 - memory overhead and performance of `keys()` and `values()`.
 
-## Big-O focus
-Students should explain the Big-O of:
+## Implemented design
+`Map` uses a `std::vector` of `KeyValuePair` entries kept in ascending key order. Duplicate keys are rejected before insertion, and all public operations preserve this invariant.
 
-- `insert`
-- `contains`
-- `update`
-- `erase`
-- `at`
-- `keys`
-- `values`
+## Big-O analysis
 
-The expected design is a clear, well-explained mapping abstraction that makes trade-offs explicit.
+- `insert`: $O(n)$ worst case because insertion at the correct position may shift entries; duplicate detection takes $O(\log n)$ with binary search.
+- `contains`: $O(\log n)$ using binary search.
+- `update`: $O(\log n)$ to locate the key and $O(1)$ to change its value.
+- `erase`: $O(n)$ worst case because removing an entry may shift later entries.
+- `at`: $O(\log n)$ to locate the key.
+- `keys`: $O(n)$ to copy every key.
+- `values`: $O(n)$ to copy every value.
+
+This design provides predictable sorted iteration and fast key lookup. It also avoids hash-table memory overhead, but insertion and erasure are slower for large maps than a hash-based implementation.
